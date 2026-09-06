@@ -1,0 +1,953 @@
+{
+  "name": "Entrega Final",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -688,
+        -208
+      ],
+      "id": "4f3b8616-db37-49b0-97d9-5685481fea1d",
+      "name": "Inicio de comunicación",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Le5UbARCrEMVfP2D",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4ac3f16e-4c30-4c0d-ad34-72648c87e18f",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "no-reply",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "45f158d1-9d0b-46f0-beeb-78580110085c",
+              "leftValue": "={{ $json.from.value[0].address }}",
+              "rightValue": "noreply",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "d6072da6-d405-45e3-8e13-af82a98af811",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "autoreply",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -464,
+        -208
+      ],
+      "id": "15f90793-ee23-4593-aaf8-1c8031f92b58",
+      "name": "Filtro de mensajes automáticos"
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appDo5fJXSucO8StU",
+          "mode": "list",
+          "cachedResultName": "Cotizaciones",
+          "cachedResultUrl": "https://airtable.com/appDo5fJXSucO8StU"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblF7YBK4tEQsVHwV",
+          "mode": "list",
+          "cachedResultName": "Contactos",
+          "cachedResultUrl": "https://airtable.com/appDo5fJXSucO8StU/tblF7YBK4tEQsVHwV"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Mail": "={{ $('Inicio de comunicación').item.json.from.value[0].address }}",
+            "Mensaje": "={{ $('Inicio de comunicación').item.json.text }}",
+            "Estado": "Pendiente",
+            "Contacto": "={{ $('Inicio de comunicación').item.json.from.value[0].name }}",
+            "ID": "={{ $('Inicio de comunicación').item.json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Contacto",
+              "displayName": "Contacto",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Mail",
+              "displayName": "Mail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Mensaje",
+              "displayName": "Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pendiente",
+                  "value": "Pendiente"
+                },
+                {
+                  "name": "Procesado por IA",
+                  "value": "Procesado por IA"
+                },
+                {
+                  "name": "Aprobado por Humano",
+                  "value": "Aprobado por Humano"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Respuesta",
+              "displayName": "Respuesta",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        -208
+      ],
+      "id": "121989af-a88f-416f-86cf-fd3cd17b6f78",
+      "name": "Creación de registro de contacto",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "R3WcWseFjAT8o3NF",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Inicio de comunicación').item.json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "# ROL\nEres una agente de atención al cliente. Tu objetivo principal es resolver dudas sobre precios y generar cotizaciones en base a lo proporcionado en la base de datos. Tu tono es profesional y amigable.\n\n# Consulta General\nSi la solicitud es vaga, responder con lo que solicita directamente sin entrar en demasiado detalle que no esté en la base de datos. Busca en la base de datos alguna coincidencia aproximada y dásela al cliente, en caso de haberla, pero no inventes precios.\n\n# Protocolo de Escalado a Humanos\nDebes transferir la conversación a un humano en los siguientes casos:\n* El cliente solicita un descuento\n* El cliente exige condiciones de pago especiales (crédito a 30/60 días, cheques, etc.).\n* El cliente muestra frustración o el sistema detecta un malentendido reiterado.\n\nEn en el formato de salida JSON, coloca en la parte de derivación a humano \"SÍ\" ante escalados, y \"NO\" si no es necesaria la derivación.\n\nEn caso de solicitar un servicio no disponible en la base de datos, no derivar a un humano y responder que no se realiza dicha actividad\n\n# REGLAS CRÍTICAS DE COMPORTAMIENTO\n1. **No inventes precios:** Si el cliente pregunta por un producto que no está en la base de conocimiento, di que no tienes el dato y escala el caso a un humano.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        112,
+        -208
+      ],
+      "id": "0cdb0678-09c0-4891-a819-78ec329ddd5d",
+      "name": "Agente de Inteligencia Artificial",
+      "retryOnFail": true,
+      "alwaysOutputData": false,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {
+          "maxTokensToSample": 1500
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        32
+      ],
+      "id": "eb982e08-65f1-4b94-a219-266e1bd7b8ed",
+      "name": "Modelo de Inteligencia Artificial",
+      "credentials": {
+        "groqApi": {
+          "id": "t11oqkr4DaWOdlnZ",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        128,
+        32
+      ],
+      "id": "8cbce3f0-5d1a-42b3-91a6-9337a427f116",
+      "name": "Memoria del Agente"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Respuesta\": \"Respuesta destinada al cliente\",\n\t\"Derivación a Humano\": \"SÍ/NO según el caso\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        32
+      ],
+      "id": "a1e6764f-92f1-4231-9952-db5a2abcdb90",
+      "name": "Formato JSON de salida"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Acceso a la base de datos de servicios y cotizaciones de la empresa",
+        "authentication": "airtableOAuth2Api",
+        "base": {
+          "__rl": true,
+          "value": "appDo5fJXSucO8StU",
+          "mode": "list",
+          "cachedResultName": "Cotizaciones",
+          "cachedResultUrl": "https://airtable.com/appDo5fJXSucO8StU"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqxGdFMsfExo5UW",
+          "mode": "list",
+          "cachedResultName": "Cotizaciones",
+          "cachedResultUrl": "https://airtable.com/appDo5fJXSucO8StU/tblqxGdFMsfExo5UW"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        32
+      ],
+      "id": "659e8458-8163-4e0b-9fa1-2fe299024f2c",
+      "name": "Base de datos en Airtable",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "R3WcWseFjAT8o3NF",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "97c752e8-6918-4ab2-9715-7ec3e0b198e6",
+              "leftValue": "={{ $json.output['Derivación a Humano'] }}",
+              "rightValue": "NO",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        -304
+      ],
+      "id": "cc6c14e3-b1b2-4afa-81ea-1ea1fc8cd968",
+      "name": "Derivación humana"
+    },
+    {
+      "parameters": {
+        "sendTo": "juani.empleoia01@gmail.com",
+        "subject": "=Error de ejecución {{ $('Inicio de comunicación').item.json.id }}",
+        "message": "=Se ha detectado un error en la ejecución del contacto {{ $('Inicio de comunicación').item.json.id }}. \nRevisar registro en Airtable.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        -112
+      ],
+      "id": "78c46b01-d551-4306-bb5a-2d5e5c9c05c8",
+      "name": "Registro de errores",
+      "webhookId": "c82ba39f-b9ef-4b69-963b-238be8f386c8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Le5UbARCrEMVfP2D",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BT0S5UZCJ",
+          "mode": "list",
+          "cachedResultName": "urgencias-jornada"
+        },
+        "text": "=Se ha escalado la conversación {{ $('Inicio de comunicación').item.json.id }}\n\n{{ $('Inicio de comunicación').item.json.text }}\n\nDarle prioridad",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        800,
+        -208
+      ],
+      "id": "00784145-95c2-4170-9dd5-04a0ef212ef8",
+      "name": "Escalamiento humano",
+      "webhookId": "0cf616fd-e17e-4753-95ee-13eb5c6d97f5",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4VcuPi9otecibWNl",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appDo5fJXSucO8StU",
+          "mode": "list",
+          "cachedResultName": "Cotizaciones",
+          "cachedResultUrl": "https://airtable.com/appDo5fJXSucO8StU"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblF7YBK4tEQsVHwV",
+          "mode": "list",
+          "cachedResultName": "Contactos",
+          "cachedResultUrl": "https://airtable.com/appDo5fJXSucO8StU/tblF7YBK4tEQsVHwV"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Inicio de comunicación').item.json.id }}",
+            "Estado": "Procesado por IA",
+            "Respuesta": "={{ $json.output.Respuesta }}",
+            "Contacto": "={{ $('Creación de registro de contacto').item.json.fields.Contacto }}",
+            "Mail": "={{ $('Creación de registro de contacto').item.json.fields.Mail }}",
+            "Mensaje": "={{ $('Creación de registro de contacto').item.json.fields.Mensaje }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Contacto",
+              "displayName": "Contacto",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Mail",
+              "displayName": "Mail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Mensaje",
+              "displayName": "Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pendiente",
+                  "value": "Pendiente"
+                },
+                {
+                  "name": "Procesado por IA",
+                  "value": "Procesado por IA"
+                },
+                {
+                  "name": "Aprobado por Humano",
+                  "value": "Aprobado por Humano"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Respuesta",
+              "displayName": "Respuesta",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        -400
+      ],
+      "id": "e45658db-1105-414f-8b96-df77ef186185",
+      "name": "Actualización de registro",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "R3WcWseFjAT8o3NF",
+          "name": "Airtable account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "sendTo": "juani.empleoia01@gmail.com",
+        "subject": "=Aprobar:   {{ $('Inicio de comunicación').item.json.subject }}",
+        "message": "=Este es el mail y la respuesta:\n\nMail\n\n {{ $('Inicio de comunicación').item.json.text }}\n\nRespuesta\n\n{{ $('Agente de Inteligencia Artificial').item.json.output.Respuesta }}\n\n",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "Aprobar",
+            "disapproveLabel": "Rechazar"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1024,
+        -400
+      ],
+      "id": "c261e9e5-802c-4d0c-bdaf-97ad5dfc9b29",
+      "name": "Human in the loop",
+      "webhookId": "9d1c4c0b-dbd5-4ac7-89ea-74a97532df2e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Le5UbARCrEMVfP2D",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fa559afa-8b80-418e-9a33-ba2c0ab3a022",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        -400
+      ],
+      "id": "879d5845-c324-457c-ab1d-019397c68856",
+      "name": "Decisión human in the loop"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "messageId": "={{ $('Inicio de comunicación').item.json.id }}",
+        "message": "={{ $('Agente de Inteligencia Artificial').item.json.output.Respuesta }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        -400
+      ],
+      "id": "e17422ad-8eb7-4d5d-b61c-55a0c3fcc8d7",
+      "name": "Respuesta Final",
+      "webhookId": "a86a7041-7160-48c0-a074-ceafeb17caf6",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Le5UbARCrEMVfP2D",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "airtableOAuth2Api",
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appDo5fJXSucO8StU",
+          "mode": "list",
+          "cachedResultName": "Cotizaciones",
+          "cachedResultUrl": "https://airtable.com/appDo5fJXSucO8StU"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblF7YBK4tEQsVHwV",
+          "mode": "list",
+          "cachedResultName": "Contactos",
+          "cachedResultUrl": "https://airtable.com/appDo5fJXSucO8StU/tblF7YBK4tEQsVHwV"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('Inicio de comunicación').item.json.id }}",
+            "Estado": "Aprobado por Humano",
+            "Respuesta": "={{ $('Actualización de registro').item.json.fields.Respuesta }}",
+            "Contacto": "={{ $('Actualización de registro').item.json.fields.Contacto }}",
+            "Mail": "={{ $('Actualización de registro').item.json.fields.Mail }}",
+            "Mensaje": "={{ $('Actualización de registro').item.json.fields.Mensaje }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Contacto",
+              "displayName": "Contacto",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Mail",
+              "displayName": "Mail",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Mensaje",
+              "displayName": "Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pendiente",
+                  "value": "Pendiente"
+                },
+                {
+                  "name": "Procesado por IA",
+                  "value": "Procesado por IA"
+                },
+                {
+                  "name": "Aprobado por Humano",
+                  "value": "Aprobado por Humano"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Respuesta",
+              "displayName": "Respuesta",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1696,
+        -400
+      ],
+      "id": "1077a7e6-38d3-48b7-9238-172c27660c13",
+      "name": "Actualización de registro final",
+      "credentials": {
+        "airtableOAuth2Api": {
+          "id": "R3WcWseFjAT8o3NF",
+          "name": "Airtable account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Inicio de comunicación": {
+      "main": [
+        [
+          {
+            "node": "Filtro de mensajes automáticos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtro de mensajes automáticos": {
+      "main": [
+        [
+          {
+            "node": "Creación de registro de contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Creación de registro de contacto": {
+      "main": [
+        [
+          {
+            "node": "Agente de Inteligencia Artificial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Inteligencia Artificial": {
+      "main": [
+        [
+          {
+            "node": "Derivación humana",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Registro de errores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Modelo de Inteligencia Artificial": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Inteligencia Artificial",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memoria del Agente": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente de Inteligencia Artificial",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formato JSON de salida": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agente de Inteligencia Artificial",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base de datos en Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente de Inteligencia Artificial",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Derivación humana": {
+      "main": [
+        [
+          {
+            "node": "Actualización de registro",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalamiento humano",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualización de registro": {
+      "main": [
+        [
+          {
+            "node": "Human in the loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Human in the loop": {
+      "main": [
+        [
+          {
+            "node": "Decisión human in the loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decisión human in the loop": {
+      "main": [
+        [
+          {
+            "node": "Respuesta Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respuesta Final": {
+      "main": [
+        [
+          {
+            "node": "Actualización de registro final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b0a0ab65-fc25-43a6-a78c-783e901e360d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5f708c39a485923618285c98b64c6871a64c9540f519cf06ca3944d780347c36"
+  },
+  "nodeGroups": [],
+  "id": "T3xz3lFam9MHTHqD",
+  "tags": []
+}
